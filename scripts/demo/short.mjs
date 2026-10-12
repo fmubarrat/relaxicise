@@ -208,7 +208,7 @@ const removeLayer = () => app.evaluate(() => document.getElementById('s-layer')?
  * same frame as its content. The edit reads the strip colour of every frame and cuts exactly where
  * it changes, so timing jitter in the recording cannot misplace a cut.
  */
-const CODES = { hook: [255, 0, 0], problem: [0, 255, 0], focus: [0, 0, 255], intro: [255, 255, 0], move: [0, 255, 255], rest: [255, 0, 255], end: [255, 255, 255] };
+const CODES = { hook: [255, 0, 0], problem: [0, 255, 0], focus: [0, 0, 255], intro: [255, 255, 0], move: [0, 255, 255], rest: [255, 0, 255], end: [255, 128, 0] }; // saturated colours only: nothing in the app resembles them
 async function tag(id) {
   await app.evaluate((rgb) => {
     const k = document.getElementById('s-code');
@@ -389,7 +389,7 @@ const frameRange = {}; // id -> [firstFrame, lastFrame] at 30 fps
   const classify = (i) => {
     const c = [strip[i * 3], strip[i * 3 + 1], strip[i * 3 + 2]];
     let best = null;
-    let bestD = 90; // must be close to a code colour; anything else (black, mixed) is "no section"
+    let bestD = 60; // must be close to a code colour; anything else (black, page, mixed) is "no section"
     for (const id of ids) {
       const d = Math.abs(c[0] - CODES[id][0]) + Math.abs(c[1] - CODES[id][1]) + Math.abs(c[2] - CODES[id][2]);
       if (d < bestD) [best, bestD] = [id, d];
