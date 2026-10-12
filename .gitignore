@@ -1,0 +1,11 @@
+node_modules
+dist
+public/mediapipe
+*.log
+
+# Demo video output and character clips
+demo/*.mp4
+demo/*.webm
+demo/*.mov
+demo/.voice-cache/
+.claude/

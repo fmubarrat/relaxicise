@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="relaxicise: work with focus, move with intention, return refreshed. Camera-checked movement breaks that run entirely in your browser." />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#F7F5F2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#19191F" media="(prefers-color-scheme: dark)" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="relaxicise" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <title>relaxicise</title>
+    <!-- Paint the app background before the stylesheet loads, so there is no white flash. -->
+    <style>
+      html { background: #f7f5f2; }
+      @media (prefers-color-scheme: dark) { html:not([data-theme='light']) { background: #19191f; } }
+      html[data-theme='dark'] { background: #19191f; }
+    </style>
+    <script>
+      // Apply a saved Light/Dark choice before the first paint (no flash of the wrong theme).
+      try {
+        var t = JSON.parse(localStorage.getItem('recess.settings.v1') || '{}').theme;
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>relaxicise needs JavaScript to run.</noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
