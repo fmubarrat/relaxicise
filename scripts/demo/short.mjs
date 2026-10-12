@@ -40,7 +40,8 @@ const SCRIPT = [
   { id: 'problem', text: 'Break reminders? We all just click them away.' },
   { id: 'focus', text: 'Meet relaxicise. You focus,' },
   { id: 'move', text: "and when it's time, you move. Your webcam counts every rep, right in your browser." },
-  { id: 'rest', text: 'Then breathe, and get back to work.' },
+  { id: 'rest', text: 'Then rest your eyes,' },
+  { id: 'rest2', text: 'or just breathe, with relaxing sounds. Then back to work.' },
   { id: 'end', text: "It's free, with no signup. Try it at relaxicise dot vercel dot app." },
 ];
 
@@ -208,7 +209,7 @@ const removeLayer = () => app.evaluate(() => document.getElementById('s-layer')?
  * same frame as its content. The edit reads the strip colour of every frame and cuts exactly where
  * it changes, so timing jitter in the recording cannot misplace a cut.
  */
-const CODES = { hook: [255, 0, 0], problem: [0, 255, 0], focus: [0, 0, 255], intro: [255, 255, 0], move: [0, 255, 255], rest: [255, 0, 255], end: [255, 128, 0] }; // saturated colours only: nothing in the app resembles them
+const CODES = { hook: [255, 0, 0], problem: [0, 255, 0], focus: [0, 0, 255], intro: [255, 255, 0], move: [0, 255, 255], rest: [255, 0, 255], rest2: [128, 0, 255], end: [255, 128, 0] }; // saturated colours only: nothing in the app resembles them
 async function tag(id) {
   await app.evaluate((rgb) => {
     const k = document.getElementById('s-code');
@@ -247,7 +248,7 @@ await app.evaluate((exercise) => {
   localStorage.setItem('recess.debug.fastTimers', '0');
   localStorage.setItem(
     'recess.settings.v1',
-    JSON.stringify({ workHours: 4, focusMinutes: 30, breakMinutes: 3, repsPerExercise: 3, exercisesPerBreak: 1, enabledExercises: [exercise], enabledRest: ['breathing'], warningEnabled: false, theme: 'light', musicEnabled: false }),
+    JSON.stringify({ workHours: 4, focusMinutes: 30, breakMinutes: 3, repsPerExercise: 2, exercisesPerBreak: 1, enabledExercises: [exercise], enabledRest: ['eyesClosed', 'breathing'], verifyEyesClosed: false, warningEnabled: false, theme: 'light', musicEnabled: false }),
   );
 }, EXERCISE);
 await app.goto(`${URL}/?debug=1`);
@@ -350,15 +351,39 @@ await tag(null);
 while ((await phase()) === 'BREAK_EXERCISE') await sleep(100);
 if (!simulated) console.log('[short] reps counted by real pose tracking.');
 
-// Recovery.
-await sleep(500);
+// Recovery, beat 1: eyes closed. Tag right after the fade-in, so the eye is seen closing (~1.6 s in).
+await sleep(400);
 await prepare();
-await caption('Then breathe. Back to work.');
-await sleep(800); // well past the screen fade-in
+await caption('Then rest your eyes…');
+await sleep(350);
 await tag('rest');
 seg.rest = [at()];
-await sleep(Math.max(3000, vlen('rest') * 1000 + 400));
+await sleep(Math.max(2600, vlen('rest') * 1000 + 400));
 seg.rest.push(at());
+await tag(null);
+await caption('');
+
+// Beat 2: breathing. The app shows one recovery activity per break (they rotate), so run a second
+// break off-camera: skip rest, start a break, count the reps quickly, and land on breathing.
+await click('Skip rest');
+await sleep(400);
+await click('Start a break');
+await sleep(400);
+await app.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.textContent?.includes('No camera'))?.click());
+await sleep(300);
+for (let i = 0; i < 10 && (await phase()) === 'BREAK_EXERCISE'; i++) {
+  await app.locator('body').press('r');
+  await sleep(150);
+}
+while ((await phase()) === 'BREAK_EXERCISE') await sleep(100);
+await sleep(400);
+await prepare();
+await caption('…or just breathe, with <b>relaxing sounds</b>.');
+await sleep(800); // past the fade-in
+await tag('rest2');
+seg.rest2 = [at()];
+await sleep(Math.max(2800, vlen('rest2') * 1000 + 450));
+seg.rest2.push(at());
 await tag(null);
 await caption('');
 
@@ -416,9 +441,9 @@ const frameRange = {}; // id -> [firstFrame, lastFrame] at 30 fps
 }
 
 // ---------------------------------------------------------------- edit: hook first
-const ORDER = ['hook', 'problem', 'focus', 'intro', 'move', 'rest', 'end'];
+const ORDER = ['hook', 'problem', 'focus', 'intro', 'move', 'rest', 'rest2', 'end'];
 // Each line starts at the beginning of its segment ("move" narration starts on the break intro).
-const VO_AT = { hook: 'hook', problem: 'problem', focus: 'focus', move: 'intro', rest: 'rest', end: 'end' };
+const VO_AT = { hook: 'hook', problem: 'problem', focus: 'focus', move: 'intro', rest: 'rest', rest2: 'rest2', end: 'end' };
 let tl = 0;
 const startOf = {};
 // Section lengths follow the narration (headless recording stretches idle scenes, so recorded
@@ -429,7 +454,8 @@ const TARGET = {
   focus: Math.max(2.6, vlen('focus') + 0.35),
   intro: 1.4,
   move: Infinity,
-  rest: Math.max(2.8, vlen('rest') + 0.45),
+  rest: Math.max(2.4, vlen('rest') + 0.3),
+  rest2: Math.max(2.6, vlen('rest2') + 0.45),
   end: Math.max(3.6, vlen('end') + 0.6),
 };
 const native = (id) => (frameRange[id][1] - frameRange[id][0] + 1) / 30;
