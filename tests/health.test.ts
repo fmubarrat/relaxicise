@@ -76,5 +76,8 @@ describe('age setting', () => {
     expect(sanitizeSettings({ age: 999 }).age).toBeNull();
     expect(sanitizeSettings({ age: 50, musicEnabled: false })).toMatchObject({ age: 50, musicEnabled: false });
     expect(DEFAULT_SETTINGS.musicEnabled).toBe(true);
+    // Anonymous visit counting is on by default and can be turned off (and stays off).
+    expect(DEFAULT_SETTINGS.analytics).toBe(true);
+    expect(sanitizeSettings({ analytics: false }).analytics).toBe(false);
   });
 });

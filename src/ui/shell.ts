@@ -29,7 +29,7 @@ import { h, setText, svg, uid } from './dom';
 import { icon, type IconName } from './icons';
 import { illustration } from './illustrations';
 
-type BoolKey = 'workNoLimit' | 'warningEnabled' | 'snoozeEnabled' | 'chime' | 'officeMode' | 'quietMode' | 'verifyEyesClosed' | 'musicEnabled';
+type BoolKey = 'workNoLimit' | 'warningEnabled' | 'snoozeEnabled' | 'chime' | 'officeMode' | 'quietMode' | 'verifyEyesClosed' | 'musicEnabled' | 'analytics';
 type TabId = 'today' | 'exercises' | 'insights' | 'settings';
 
 const REST_ICONS: Record<RestId, IconName> = { eyeFocus: 'eye', eyesClosed: 'eyeClosed', breathing: 'wind', water: 'droplet' };
@@ -552,6 +552,7 @@ export function createShellScreen(ctx: AppContext): Screen {
     group(
       'Privacy and safety',
       row('lock', 'Video never leaves this device', 'Reps are counted in the browser. Nothing is recorded or sent.', null),
+      switchRow('analytics', 'chart', 'Anonymous visit count', 'Counts visits by country so we know the app is useful. No cookies, no IP address stored, no video or session data. Takes effect next time you open the app.'),
       row('heart', 'Not medical advice', 'Move gently and skip anything that does not suit you.', null),
       row('info', 'Runs on trust', 'relaxicise covers this tab at break time. It cannot lock your computer.', null),
     ),

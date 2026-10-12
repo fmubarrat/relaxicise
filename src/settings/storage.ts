@@ -23,7 +23,7 @@ export function sanitizeSettings(input: unknown): Settings {
     const v = o[key];
     if (typeof v === 'number' && typeof parseNumeric(key, String(v)) === 'number') out[key] = v;
   }
-  for (const key of ['workNoLimit', 'warningEnabled', 'snoozeEnabled', 'chime', 'officeMode', 'quietMode', 'verifyEyesClosed', 'musicEnabled'] as const) {
+  for (const key of ['workNoLimit', 'warningEnabled', 'snoozeEnabled', 'chime', 'officeMode', 'quietMode', 'verifyEyesClosed', 'musicEnabled', 'analytics'] as const) {
     if (typeof o[key] === 'boolean') out[key] = o[key] as boolean;
   }
   if (Array.isArray(o.enabledExercises)) out.enabledExercises = o.enabledExercises.filter(isExerciseId);

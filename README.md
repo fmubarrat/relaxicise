@@ -122,7 +122,13 @@ Debug mode (`?debug=1`) also offers:
 
 - The camera is requested only when you click "Turn on camera" during a break. Frames are passed to MediaPipe in memory and are never recorded, stored or transmitted. The stream is stopped as soon as the exercise phase ends, or when you snooze or postpone.
 - The MediaPipe runtime and models are served from this app (`public/mediapipe`), so at runtime nothing loads from a third-party host.
-- Settings, the current session and a "breaks today" count are stored in `localStorage` only. No personal data is collected and there are no analytics.
+- Settings, the current session and a "breaks today" count are stored in `localStorage` only. No personal data is collected.
+- **Anonymous visit counting (BRD Q-5, decided: opt-out, privacy-first):** the deployed site uses Vercel Web Analytics.
+  - It counts page visits by country, device and referrer.
+  - It sets no cookies, stores no IP addresses, and never sends video, reps or session data.
+  - It is sent to the site's own domain (`/_vercel/insights`), so there are still no third-party requests.
+  - It runs only in production. Users can turn it off under **Settings → Privacy and safety → Anonymous visit count**.
+  - To see the numbers: Vercel → project → **Analytics** (enable it there once).
 
 ## Known limitations
 

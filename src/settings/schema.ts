@@ -25,6 +25,11 @@ export interface Settings {
   musicEnabled: boolean;
   /** Which break music to play, or a random track each break. */
   musicTrack: MusicChoice;
+  /**
+   * Anonymous visit counting (Vercel Web Analytics): no cookies, no stored IP, country-level only.
+   * Never includes video, reps or any session data.
+   */
+  analytics: boolean;
   /** Appearance: follow the system, or always light / dark. */
   theme: ThemeChoice;
   /** Optional, only used locally to personalise heart-rate ranges. */
@@ -87,6 +92,7 @@ export const DEFAULT_SETTINGS: Settings = {
   musicEnabled: true,
   musicTrack: 'calm',
   theme: 'system',
+  analytics: true,
   age: null,
 };
 

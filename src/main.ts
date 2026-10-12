@@ -13,6 +13,7 @@ import { requestNotificationPermission, unlockAudio } from './ui/alerts';
 import { loadPoseLandmarker } from './pose/landmarkers';
 import { toggleFullscreen } from './ui/fullscreen';
 import { applyTheme } from './ui/theme';
+import { inject } from '@vercel/analytics';
 
 function safeStorage(): Storage | null {
   try {
@@ -51,6 +52,9 @@ const ctx: AppContext = {
 };
 
 applyTheme(settingsStore.load().theme);
+// Anonymous, cookieless visit counting on the deployed site only (Vercel Web Analytics, first-party
+// /_vercel/insights endpoint). Off in development, and off if the user turned it off in Settings.
+if (import.meta.env.PROD && settingsStore.load().analytics) inject({ mode: 'production' });
 const app = new App(document.getElementById('app')!, ctx);
 controller.tick(); // catch up after a refresh or a long absence
 app.render();
