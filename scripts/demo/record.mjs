@@ -151,6 +151,8 @@ const click = (role, name) => page.getByRole(role, { name, exact: true }).first(
 // Demo-only layers (captions, intro, end card), injected on top of the real app.
 const DEMO_CSS = `
   .debug-panel { display: none !important; }
+  /* Debug-only controls never appear in the video. */
+  .debug-only { display: none !important; }
   html { scrollbar-width: none; } ::-webkit-scrollbar { display: none; }
   #demo-caption { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 9999;
     padding: 12px 22px; border-radius: 10px; background: rgba(32,32,39,.94); color: #fff;
@@ -352,7 +354,9 @@ await sleep(500);
 await prepare();
 await say('break', { minMs: 3000 });
 await hideCaption();
-await click('button', CLIP ? 'Start camera' : 'No camera (debug)');
+if (CLIP) await click('button', 'Start camera');
+// The debug "No camera" button is hidden in recordings, so trigger it directly.
+else await page.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.textContent?.includes('No camera'))?.click());
 const cameraClickedAt = at();
 if (CLIP) {
   await page.locator('.active-grid').waitFor({ state: 'visible', timeout: 120_000 }).catch(() => undefined);

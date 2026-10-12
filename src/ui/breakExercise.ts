@@ -75,7 +75,7 @@ export function createBreakExerciseScreen(ctx: AppContext): Screen {
     'section',
     { class: 'intro' },
     planCards,
-    h('div', { class: 'start-row' }, cameraBtn, debug.enabled ? h('button', { type: 'button', class: 'btn', onclick: () => continueWithoutCamera() }, 'No camera (debug)') : null),
+    h('div', { class: 'start-row' }, cameraBtn, debug.enabled ? h('button', { type: 'button', class: 'btn debug-only', onclick: () => continueWithoutCamera() }, 'No camera (debug)') : null),
     h('p', { class: 'quiet-note' }, icon('lock', 16), 'Counts reps on this device. Nothing is recorded or sent.'),
   );
 
