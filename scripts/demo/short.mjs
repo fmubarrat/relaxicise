@@ -28,7 +28,7 @@ const CLIP = opt('clip', 'demo/character.mp4');
 const EXERCISE = opt('exercise', 'armRaises');
 const OUT = resolve(opt('out', 'demo/relaxicise-short.mp4'));
 const VOICE = opt('voice', DEFAULT_VOICE);
-const HOOK = opt('hook', "My laptop won't let me skip breaks.");
+const HOOK = opt('hook', "Your laptop won't let you skip breaks.");
 // Page is laid out at 540x675 CSS px (the app's phone layout) and rendered at 2x -> 1080x1350.
 const CW = 540;
 const CH = 675;
@@ -36,9 +36,9 @@ const VW = CW * 2;
 const VH = CH * 2;
 
 const SCRIPT = [
-  { id: 'hook', text: "My laptop won't let me skip breaks anymore." },
-  { id: 'problem', text: 'Break reminders? We just click them away.' },
-  { id: 'focus', text: 'So I built relaxicise. You focus,' },
+  { id: 'hook', text: 'Stuck at your desk all day? Not anymore.' },
+  { id: 'problem', text: 'Break reminders? We all just click them away.' },
+  { id: 'focus', text: 'Meet relaxicise. You focus,' },
   { id: 'move', text: "and when it's time, you move. Your webcam counts every rep, right in your browser." },
   { id: 'rest', text: 'Then breathe, and get back to work.' },
   { id: 'end', text: "It's free, with no signup. Try it at relaxicise dot vercel dot app." },
@@ -276,7 +276,7 @@ await removeLayer();
 // Focus ring.
 await click('Start session');
 await sleep(500);
-await caption('So I built <b>relaxicise</b>. You focus…');
+await caption('Meet <b>relaxicise</b>. You focus…');
 await sleep(300); // let each change paint before marking a section
 await tag('focus');
 seg.focus = [at()];
