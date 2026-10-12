@@ -16,6 +16,8 @@
  *   --theme <light|dark>
  *   --voice <name>      Kokoro voice (default af_heart; e.g. am_michael, bf_emma)
  *   --no-voice          silent video, captions only
+ *   --no-music          no background music (by default an original generated track is mixed in,
+ *                       soft under the intro, the beat drops at "Meet relaxicise", ducked under the voice)
  *   --headless          no visible browser window (smoother tracking needs the window + GPU)
  *   --width/--height    video size (default 1280x720; must fit on your screen with the window chrome)
  *
@@ -27,6 +29,7 @@ import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { synthesize, DEFAULT_VOICE } from './voice.mjs';
+import { mixUnderVoice, renderMusic } from './music.mjs';
 
 // ---------------------------------------------------------------- options
 const args = process.argv.slice(2);
@@ -42,6 +45,7 @@ const OUT = resolve(opt('out', 'demo/relaxicise-demo.mp4'));
 const THEME = opt('theme', 'light');
 const VOICE = opt('voice', DEFAULT_VOICE);
 const NARRATE = !flag('no-voice');
+const MUSIC = !flag('no-music');
 const HEADLESS = flag('headless');
 // 1280x720 (HD): fits a visible window on common laptop screens (the GPU needs a visible window).
 const W = Number(opt('width', 1280));
@@ -467,7 +471,17 @@ if (voice.size) {
     labels.push(`[a${idx}]`);
   }
   const filter = `${chains.join(';')};${labels.join('')}amix=inputs=${labels.length}:normalize=0:dropout_transition=0,alimiter=limit=0.95[vo]`;
-  ff('-i', silent, ...inputs, '-filter_complex', filter, '-map', '0:v', '-map', '[vo]', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', OUT);
+  const voiced = MUSIC ? join(work, 'voiced.mp4') : OUT;
+  ff('-i', silent, ...inputs, '-filter_complex', filter, '-map', '0:v', '-map', '[vo]', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', voiced);
+  if (MUSIC) {
+    const reveal = spoken.find((x) => x.id === 'intro4');
+    const dropAt = reveal ? mapTime(reveal.t) : 15;
+    const seconds = Number(execFileSync(FFPROBE, ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', voiced]).toString().trim());
+    console.log(`[demo] composing background music (beat drops at ${dropAt.toFixed(1)} s) ...`);
+    const wav = join(work, 'music.wav');
+    await renderMusic(seconds, wav, { dropAt });
+    mixUnderVoice(FFMPEG, voiced, wav, OUT);
+  }
 } else {
   ff('-i', silent, '-c', 'copy', '-movflags', '+faststart', OUT);
 }

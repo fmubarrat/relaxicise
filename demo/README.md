@@ -18,6 +18,12 @@ It needs FFmpeg (`winget install --id Gyan.FFmpeg -e`).
 - Pick a voice with `--voice am_michael` (others: `af_heart`, the default; `bf_emma`; `am_adam`), or use `--no-voice` for a silent video.
 - Each scene lasts as long as its line.
 
+**Background music:** an original track is generated for each video, so there is nothing to license.
+- It plays soft chords under the problem intro, then the beat drops at "Meet relaxicise".
+- It ducks automatically under the voice and fades out on the end card.
+- Use `--no-music` to leave it out.
+- To add or redo music on an existing video: `node scripts/demo/music.mjs in.mp4 out.mp4 --drop 15 --level 0.55` (`--level` sets the music volume between lines).
+
 **A browser window opens while it records.** That is deliberate: it lets pose tracking use your graphics card, so the skeleton follows in real time (about 30 fps; software rendering only manages a few). Don't click inside it. The default 1280x720 size fits a 1600x900 screen; use `--width` and `--height` for bigger screens.
 
 ## With an AI character, so tracking is real
