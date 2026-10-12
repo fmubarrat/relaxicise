@@ -159,7 +159,7 @@ async function renderInPage({ seconds, dropAt, seed }) {
 
   // Arrangement: soft intro (pad + sparse plucks), then the beat drops at `dropAt`.
   const bars = Math.ceil(seconds / bar);
-  const dropBar = Math.max(1, Math.round(dropAt / bar));
+  const dropBar = Math.max(0, Math.round(dropAt / bar)); // 0 = beat from the first bar
   const ARP = [0, 2, 4, 2, 1, 3, 4, 3];
   for (let b = 0; b < bars; b++) {
     const t0 = b * bar;

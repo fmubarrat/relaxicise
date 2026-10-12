@@ -26,6 +26,19 @@ It needs FFmpeg (`winget install --id Gyan.FFmpeg -e`).
 
 **A browser window opens while it records.** That is deliberate: it lets pose tracking use your graphics card, so the skeleton follows in real time (about 30 fps; software rendering only manages a few). Don't click inside it. The default 1280x720 size fits a 1600x900 screen; use `--width` and `--height` for bigger screens.
 
+## Short vertical video (LinkedIn, Reels, Shorts)
+
+```sh
+npm run demo:short     # writes demo/relaxicise-short.mp4 (1080x1350, ~30 s)
+```
+
+The short opens on the hook: the person exercising with live tracking, under a bold line ("My laptop won't let me skip breaks."). It then runs problem, focus, the move with real rep counting, recovery, and an end card with the link. It has voice-over and music from the first second.
+
+- It records off-screen (no window) with GPU tracking, using the app's phone layout rendered at 2x for sharp text.
+- Sections are cut frame-accurately using colour tags painted in each frame. Each section lasts as long as its narration line.
+- To change the opening line: `--hook "Your text"`. The spoken lines are in `SCRIPT` at the top of `scripts/demo/short.mjs`.
+- It needs `demo/character.mp4`.
+
 ## With an AI character, so tracking is real
 
 Put a clip of a person exercising at `demo/character.mp4`, then run `npm run demo:video`. Chrome then uses that clip as its webcam, so the app tracks the person and counts reps for real. If the person can't be detected, the recorder says so and simulates the remaining reps so the video still finishes.

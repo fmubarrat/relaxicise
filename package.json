@@ -17,7 +17,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "demo:video": "node scripts/demo/record.mjs"
+    "demo:video": "node scripts/demo/record.mjs",
+    "demo:short": "node scripts/demo/short.mjs"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.1.0",
